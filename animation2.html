@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<style>
+
+.organic {
+  width: 150px;
+  height: 20px;
+  position: relative;
+  background-color: green;
+}
+
+.pad {
+  width: 150px;
+  height: 20px;
+  position: relative;
+  background-color: white;
+}
+
+</style>
+<body>
+
+<p><button onclick="myMove()">Click Me (only once)</button></p> 
+
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-3">
+      <div class="list-group-item bg-success text-center" id="organic1">MLA1111</div>
+      <div class="list-group-item bg-success text-center" id="organic2">MLA1112</div>
+      <div class="list-group-item bg-success text-center" id="organic3">MLA1113</div>
+      <div class="list-group-item bg-success text-center" id="organic4">MLA1114</div>
+      <div class="list-group-item bg-success text-center" id="organic5">MLA1115</div>
+      <div class="list-group-item bg-success text-center" id="organic6">MLA1116</div>
+      <div class="list-group-item bg-success text-center" id="organic7">MLA1117</div>
+      <div class="list-group-item bg-info text-center" id="pad1" >MLA1114</div>
+      <div class="list-group-item bg-success text-center" id="organic8">MLA1118</div>
+      <div class="list-group-item bg-success text-center" id="organic9">MLA1119</div>
+      <div class="list-group-item bg-info text-center" id="pad2" >MLA1117</div>
+      <div class="list-group-item bg-success text-center" id="organic10">MLA1120</div>
+      <div class="list-group-item bg-info text-center" id="pad3" >MLA1150</div>
+      <div class="list-group-item bg-success text-center" id="organic11">MLA1121</div>
+    </div>
+    <div class="col-2">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">ID</th>
+            <th scope="col">INCR</th>
+            <th scope="col">SUGGESTED</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">1</th>
+            <td>MLA1114</td>
+            <td>8</td>
+            <td>3</td>
+          </tr>
+          <tr>
+            <th scope="row">2</th>
+            <td>MLA1117</td>
+            <td>11</td>
+            <td>3</td>
+          </tr>
+          <tr>
+            <th scope="row">3</th>
+            <td>MLA1150</td>
+            <td>13</td>
+            <td>9</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+
+function myMove() {
+  var pad = document.getElementById('pad1');
+  var positions = ['organic7','organic6','organic5','organic4','organic5','organic6','organic7'];
+  
+  var id = setInterval(swap,1500);
+  function swap(){
+    var position = positions.pop(); 
+    console.log("Swapping position " + position);     
+    if(positions.length==0){
+      clearInterval(id);
+      var pad2 = document.getElementById('pad2');
+      var positions2 = ['organic5','organic6','pad1','organic7','organic8','organic9'];
+      var id2 = setInterval(swap2,1500);
+      function swap2(){
+        var position2 = positions2.pop(); 
+        if(positions2.length==0){
+          clearInterval(id2);
+          var pad3 = document.getElementById('pad3');
+          var positions3 = ['organic7','organic8','organic9','organic10'];
+          var id3 = setInterval(swap3,1500);    
+          function swap3(){
+            var position3 = positions3.pop(); 
+            if(positions3.length==0){
+              clearInterval(id3);            
+            }
+            var content3 = document.getElementById(position3);
+            var parent3 = content3.parentNode;
+            parent3.insertBefore(pad3, content3);             
+          }      
+        }        
+        var content2 = document.getElementById(position2);
+        var parent2 = content2.parentNode;
+        parent2.insertBefore(pad2, content2);           
+      }
+    }
+    var content = document.getElementById(position);
+    if(position=='organic4'){
+      console.log("ooooooooooooooooo");
+      content.classList.remove('bg-success');
+      content.classList.add('bg-danger');
+    }else{
+      document.getElementById('organic4').classList.remove('bg-danger');
+      document.getElementById('organic4').classList.add('bg-success');
+    }
+    var parent = content.parentNode;
+    parent.insertBefore(pad, content);    
+  }
+
+}
+
+
+function myMove2() {
+  var elements = ['pad1','organic4','organic5','organic6','organic7','organic8','organic9','organic10','organic11'];
+  moveElement(elements,20);
+}
+
+function moveElement(ids,distance) {
+  var id = ids.pop();
+  console.log('Moving element ' + id);
+  var elem = document.getElementById(id);   
+  if(elem==null){
+    return;
+  }
+  if(typeof id!='undefined' && id.startsWith('pad')){
+    addPad('organic4', 'pad1');
+    moveElement(ids,20);
+  }else{
+    var pos = 0;
+    var id = setInterval(frame, 20);
+    function frame() {
+      if (pos == 40) {      
+        clearInterval(id);
+        if(ids.length>0){
+          moveElement(ids,20);  
+        }     
+      } else {
+        pos++; 
+        elem.style.top = pos + "px"; 
+      }
+    }    
+  }
+}
+
+function addPad(organicId,padId){
+  var elem = document.getElementById(organicId); 
+  var pad = document.getElementById(padId); 
+  elem.parentNode.insertBefore( pad, elem);
+  pad.style.display="block";
+  elem.style.top = "0px";
+  document.getElementById('organic4').style.top='0px'; 
+  document.getElementById('organic5').style.top='0px'; 
+  document.getElementById('organic6').style.top='0px'; 
+  document.getElementById('organic7').style.top='0px'; 
+  document.getElementById('organic8').style.top='0px'; 
+  document.getElementById('organic9').style.top='0px'; 
+  document.getElementById('organic10').style.top='0px'; 
+  document.getElementById('organic11').style.top='0px'; 
+}
+
+function moveAndShow(id,distance,padId) {
+  var elem = document.getElementById(id);  
+  var pad = document.getElementById(padId) 
+  var pos = 0;
+  var id = setInterval(frame, 5);
+  function frame() {
+    if (pos == 40) {
+      elem.style.top='0px';
+      pad.style.display="block";
+      clearInterval(id);
+    } else {
+      pos++; 
+      elem.style.top = pos + "px"; 
+    }
+  }
+}
+</script>
+
+</body>
+</html>
